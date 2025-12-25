@@ -4,6 +4,12 @@ A 5x3 bi-color LED grid controlled by Arduino, using multiplexing to control 15 
 
 BOM: [`bom.csv`](bom.csv)
 
+## Media!
+
+![alt text](media/IMG_3039.jpeg)
+
+<video controls src="media/IMG_3042.MOV" title="Title"></video>
+
 ## Hardware Design
 
 ### Components
