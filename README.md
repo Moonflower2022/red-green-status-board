@@ -8,7 +8,8 @@ BOM: [`bom.csv`](bom.csv)
 
 ![alt text](media/IMG_3039.jpeg)
 
-<video controls src="media/IMG_3042.MOV" title="Title"></video>
+Demo video on youtube: 
+[![Demo video](https://img.youtube.com/vi/y9h3R71Xfdk/0.jpg)](https://www.youtube.com/watch?v=y9h3R71Xfdk)
 
 ## Hardware Design
 
