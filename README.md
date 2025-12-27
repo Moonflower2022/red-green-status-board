@@ -1,137 +1,82 @@
-# Red-Green Status Board
+# red-green status board
 
-A 5x3 bi-color LED grid controlled by Arduino, using multiplexing to control 15 LEDs with minimal pins.
-
-BOM: [`bom.csv`](bom.csv)
-
-## Media!
+a 5x3 grid of bi-color leds that can show different animations. built with an arduino and some patience soldering leds to perfboard. uses multiplexing so you dont need 30 pins to control 15 bi-color leds.
 
 ![alt text](media/IMG_3039.jpeg)
 
-Demo video on youtube: 
-[![Demo video](https://img.youtube.com/vi/y9h3R71Xfdk/0.jpg)](https://www.youtube.com/watch?v=y9h3R71Xfdk)
+demo video:
+[![demo video](https://img.youtube.com/vi/y9h3R71Xfdk/0.jpg)](https://www.youtube.com/watch?v=y9h3R71Xfdk)
 
-## Hardware Design
-
-### Components
-- 15 bi-color (red/green) LEDs arranged in a 5x3 grid
-- Arduino board
-- Perfboard for mounting
-- Resistors for current limiting
-
-### Wiring
-The grid uses multiplexing to control all 15 LEDs with 13 Arduino pins:
-
-- **Column pins (3)**: A0, A1, A2 (ground when active)
-- **Red row pins (5)**: Digital pins 7, 6, 5, 4, 3
-- **Green row pins (5)**: Digital pins 12, 11, 10, 9, 8
-
-Each LED has both red and green elements wired separately, allowing individual color control. The grid is scanned column by column rapidly enough (400-1000μs per column) that persistence of vision creates the illusion of all LEDs being on simultaneously.
-
-### Schematic
+## wiring
 
 ```
-        COL0   COL1   COL2
-         A0     A1     A2
+        col0   col1   col2
+         a0     a1     a2
           |      |      |
           v      v      v
-ROW0 12G--[LED]--[LED]--[LED]
-      3R--[LED]--[LED]--[LED]
+row0 12g--[led]--[led]--[led]
+      3r--[led]--[led]--[led]
 
-ROW1 11G--[LED]--[LED]--[LED]
-      4R--[LED]--[LED]--[LED]
+row1 11g--[led]--[led]--[led]
+      4r--[led]--[led]--[led]
 
-ROW2 10G--[LED]--[LED]--[LED]
-      5R--[LED]--[LED]--[LED]
+row2 10g--[led]--[led]--[led]
+      5r--[led]--[led]--[led]
 
-ROW3  9G--[LED]--[LED]--[LED]
-      6R--[LED]--[LED]--[LED]
+row3  9g--[led]--[led]--[led]
+      6r--[led]--[led]--[led]
 
-ROW4  8G--[LED]--[LED]--[LED]
-      7R--[LED]--[LED]--[LED]
+row4  8g--[led]--[led]--[led]
+      7r--[led]--[led]--[led]
 
-Each LED is bi-color (common cathode):
-- Red anode connects to row pins 3-7
-- Green anode connects to row pins 8-12
-- Common cathode connects to column pins A0-A2
-
-To light an LED:
-1. Set row pin HIGH (red or green)
-2. Set column pin LOW
-3. Current flows: Pin → LED → Column → GND
+to light an led:
+1. set the row pin high (pins 3-7 for red, 8-12 for green)
+2. set the column pin low
+3. current flows through the led
 ```
 
-### Why Multiplexing?
-Direct control of 15 bi-color LEDs would require 30 pins (red + green for each). Multiplexing reduces this to 13 pins by scanning the grid rapidly. The code displays each column for a few hundred microseconds, cycling through all columns fast enough that the human eye perceives continuous illumination.
+the leds are bi-color with a common cathode, so red and green share the same ground connection but have separate anode pins.
 
-> Note: This project uses standard multiplexing. [Charlieplexing](https://en.wikipedia.org/wiki/Charlieplexing) could reduce pin count further.
+## how it works
 
-## Project Structure
+the grid is wired so that 3 column pins (a0, a1, a2) and 10 row pins (3-12) can control all 15 leds. each led has a red element and a green element that can be controlled separately. the arduino rapidly scans through each column, lighting up the right leds for a few hundred microseconds before moving to the next column. it happens fast enough that your eyes see all the leds on at once.
 
-Each directory contains a complete Arduino sketch with a different pattern or function:
+this is called multiplexing and it saves a ton of pins - direct control would need 30 pins instead of 13.
 
-### focus_light/
-A simple red/green status indicator controlled by a button.
-- Button on pin 13 toggles between red and green states
-- Displays solid red or solid green across entire grid
-- Useful as a focus indicator or status light
+## the animations
 
-### rain/
-Random falling drops animation.
-- Drops spawn randomly in each column
-- Each drop is randomly colored red or green
-- Simulates rain falling down the grid
+**focus_light** - simple red/green status light. press the button on pin 13 to toggle between red and green. good for a focus indicator for family etc
 
-### snake/
-A snake moving around the grid perimeter.
-- Red head with green body segments
-- Follows a predefined path around the outer edge
-- Tail length: 4 segments
+**rain** - random drops falling down the grid. each drop spawns randomly and is colored either red or green.
 
-### SOCRATICA/
-Text display showing "SOCRATICA" letter by letter.
-- Each letter defined as a 5x3 pixel pattern
-- Alternating red and green letters
-- Cycles through all 9 letters continuously
+**snake** - a snake with a red head and green body moving around the perimeter of the grid.
 
-### test/
-Test sketch (currently identical to snake)
+**socratica** - displays the letters s-o-c-r-a-t-i-c-a one at a time in alternating red and green.
 
-## How It Works
+**test** - currently just another snake sketch.
 
-All sketches share the same basic multiplexing pattern:
+## building one yourself
 
-1. **Setup**: Configure pins 3-12, A0-A2 as outputs
-2. **Display loop**: For each frame (40-50 iterations):
-   - Activate one column at a time
-   - Set the appropriate red/green row pins HIGH for that column
-   - Hold for 300-400 microseconds
-   - Turn off all pins and move to next column
-3. **Pattern update**: After each frame, update the animation state
+1. solder 15 bi-color leds to perfboard in a 5x3 grid
+2. wire the columns together (3 wires total)
+3. wire the red elements in rows (5 wires)
+4. wire the green elements in rows (5 wires)
+5. hook it up to an arduino following the pin mapping above
+6. upload any sketch and watch it go
 
-The rapid scanning creates smooth animations and mixed colors (orange = red + green on).
+[bom here](bom.csv)
 
-## Building Your Own
+## things i learned
 
-1. Solder 15 bi-color LEDs to a perfboard in a 5x3 grid
-2. Wire columns together (one wire per column)
-3. Wire red elements in rows (5 row wires)
-4. Wire green elements in rows (5 row wires)
-5. Connect to Arduino as specified above
-6. Upload any of the sketches
-7. Watch the patterns!
+-   this was my first time using perfboard and doing multiplexing
+-   c++ was rough at first but got easier as i went
+-   i used the "wrong" side of the perfboard initially (oops)
+-   some leds were backwards and had to be desoldered and flipped
+-   charlieplexing exists and would use even fewer pins but multiplexing was simpler to understand
 
-## Lessons Learned
+## future ideas
 
-- First time using perfboard and multiplexing
-- C++ was challenging initially but got easier
-- Used the "wrong" side of the perfboard initially
-- Some LEDs were soldered backwards and had to be fixed
-- Charlieplexing would have been even more efficient
-
-## Future Ideas
-
-- Combine multiple patterns with button switching
-- Add brightness control
-- Implement more complex animations
-- Try charlieplexing for reduced pin usage
+-   combine patterns with button controls to switch between them
+-   add brightness adjustment
+-   try charlieplexing to see how much more annoying it is
+-   more complex animations maybe
